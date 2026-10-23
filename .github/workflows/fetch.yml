@@ -1,0 +1,23 @@
+name: fetch-audio
+on:
+  push:
+    paths: ['fetch/url.txt']
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download file
+        run: |
+          mkdir -p audio
+          NAME=$(sed -n 2p fetch/url.txt)
+          curl -sSL -o "audio/$NAME" "$(sed -n 1p fetch/url.txt)"
+          ls -la audio
+          git rm -q fetch/url.txt
+          git config user.name "Thinkory Intelligence"
+          git config user.email "ceo@thinkoryintelligence.com"
+          git add audio
+          git commit -m "Fetched audio $NAME"
+          git push
